@@ -27,10 +27,19 @@
     <main>
         <section id="home" class="section hero">
             <div class="hero__content">
-                <h1 class="hero__title">Happy Birthday, <span class="soft">my love</span> 🎂</h1>
+                <div class="hero__main-title">Happy Birthday My Love 💖</div>
+                <h1 class="hero__title"><span class="soft">Soulayma</span> 🎂</h1>
                 <p class="hero__subtitle" id="subtitle">You make my world sparkle like a Taylor bridge ✨ and cozy like Stitch cuddles 💙</p>
                 <div class="hero__cta">
-                    <button id="confettiBtn" class="btn btn--primary">Celebrate!</button>
+                    <div class="celebrate-arrow">
+                        <div class="arrow-text">✨ Click here to celebrate ✨</div>
+                        <div class="arrow-pointer">↓</div>
+                    </div>
+                    <button id="confettiBtn" class="btn btn--primary celebrate-btn">
+                        <span class="btn-sparkle">🎉</span>
+                        Celebrate!
+                        <span class="btn-sparkle">🎉</span>
+                    </button>
                 </div>
                 <div class="stats" id="quickStats">
                     <div class="stat"><span id="daysTogether">—</span><small id="daysLabel">days together</small></div>
@@ -77,9 +86,30 @@
 
         <section id="gallery" class="section gallery">
             <h2>Moments I Love With You 📸</h2>
-            <p class="section__hint">Add your photos in <code>assets/images/gallery</code> and list them in <code>config.js</code>. Click to zoom.</p>
+            <p class="section__hint">Click to zoom.</p>
             <div class="gallery__grid" id="galleryGrid"></div>
         </section>
+
+        <section id="taylor-quotes" class="section taylor-section">
+            <h2>Songs That Remind Me of Us ✨</h2>
+            <div class="quotes-carousel" id="quotesCarousel">
+                <div class="quote-slide active">
+                    <p class="quote-text">"You've got that James Dean daydream look in your eye"</p>
+                    <span class="quote-song">- Style</span>
+                </div>
+                <div class="quote-slide">
+                    <p class="quote-text">"I've loved you three summers now, honey, but I want 'em all"</p>
+                    <span class="quote-song">- Lover</span>
+                </div>
+                <div class="quote-slide">
+                    <p class="quote-text">"You were my crown, now I'm in exile"</p>
+                    <span class="quote-song">- exile</span>
+                </div>
+            </div>
+            <div class="carousel-dots" id="quoteDots"></div>
+        </section>
+
+
 
         
 
@@ -93,7 +123,7 @@
     </main>
 
     <footer class="site-footer">
-        <p>Made with 💖 by <span id="fromName">Me</span> for <span id="toName">You</span>. Forever + 1.</p>
+        <p>Made with love ❤️ Ahmed Fakhfakh</p>
     </footer>
 
     <div class="audio-ui" aria-live="polite">

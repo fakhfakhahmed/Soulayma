@@ -2,6 +2,8 @@
 (function(){
 	const cfg = window.LOVE_CONFIG || {};
 
+
+
 	// Brand + names
 	const brandName = document.getElementById('brandName');
 	const herNameTitle = document.getElementById('herNameTitle');
@@ -439,6 +441,88 @@
 	}
 
 	buildStorySlideshow();
+
+	// Taylor Swift Quotes Carousel
+	function initQuotesCarousel(){
+		const carousel = document.getElementById('quotesCarousel');
+		const dotsContainer = document.getElementById('quoteDots');
+		if(!carousel || !dotsContainer) return;
+
+		const slides = carousel.querySelectorAll('.quote-slide');
+		let currentQuote = 0;
+
+		// Create dots
+		slides.forEach((_, index) => {
+			const dot = document.createElement('div');
+			dot.className = `carousel-dot ${index === 0 ? 'active' : ''}`;
+			dot.addEventListener('click', () => goToQuote(index));
+			dotsContainer.appendChild(dot);
+		});
+
+		function goToQuote(index){
+			slides[currentQuote].classList.remove('active');
+			dotsContainer.children[currentQuote].classList.remove('active');
+			
+			currentQuote = index;
+			slides[currentQuote].classList.add('active');
+			dotsContainer.children[currentQuote].classList.add('active');
+		}
+
+		// Auto-rotate quotes
+		setInterval(() => {
+			const nextQuote = (currentQuote + 1) % slides.length;
+			goToQuote(nextQuote);
+		}, 4000);
+	}
+
+	// Enhanced K-pop floating elements
+	function createKpopElements(){
+		const heartsContainer = document.getElementById('floating-hearts');
+		if(!heartsContainer) return;
+
+		function createKpopHeart(){
+			const heart = document.createElement('div');
+			heart.className = 'heart kpop-heart';
+			heart.style.left = Math.random() * 100 + 'vw';
+			heart.style.animationDelay = Math.random() * 2 + 's';
+			heartsContainer.appendChild(heart);
+
+			setTimeout(() => heart.remove(), 8000);
+		}
+
+		function createSparkle(){
+			const sparkle = document.createElement('div');
+			sparkle.className = 'sparkle';
+			sparkle.textContent = ['✨', '💜', '⭐', '💖'][Math.floor(Math.random() * 4)];
+			sparkle.style.left = Math.random() * 100 + 'vw';
+			sparkle.style.animationDelay = Math.random() * 2 + 's';
+			heartsContainer.appendChild(sparkle);
+
+			setTimeout(() => sparkle.remove(), 5000);
+		}
+
+		function createStitchElement(){
+			const stitch = document.createElement('div');
+			stitch.className = 'stitch-element';
+			stitch.textContent = '💙';
+			stitch.style.left = Math.random() * 100 + 'vw';
+			stitch.style.top = Math.random() * 80 + 'vh';
+			heartsContainer.appendChild(stitch);
+
+			setTimeout(() => stitch.remove(), 10000);
+		}
+
+		// Create elements at intervals
+		setInterval(createKpopHeart, 3000);
+		setInterval(createSparkle, 2000);
+		setInterval(createStitchElement, 8000);
+	}
+
+
+
+	// Initialize new features
+	initQuotesCarousel();
+	createKpopElements();
 
 	// If hero becomes visible again, restore it fully
 	const homeSection = document.getElementById('home');
