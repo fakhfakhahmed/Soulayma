@@ -63,6 +63,12 @@ body{
 @keyframes word-float{0%{transform:translateY(100vh) translateX(0px) rotate(0deg);opacity:0}10%{opacity:.6}90%{opacity:.3}100%{transform:translateY(-50vh) translateX(100px) rotate(360deg);opacity:0}}
 @keyframes cursor-sparkle-fade{0%{transform:scale(0) rotate(0deg);opacity:1}100%{transform:scale(1.5) rotate(180deg);opacity:0}}
 @keyframes flicker{0%,100%{opacity:1;transform:scale(1)}25%{opacity:0.8;transform:scale(0.95)}50%{opacity:1;transform:scale(1.05)}75%{opacity:0.9;transform:scale(0.98)}}
+@keyframes twinkle{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes stitch-bounce{0%,100%{transform:translateY(0px) rotate(0deg)}25%{transform:translateY(-10px) rotate(-5deg)}75%{transform:translateY(-5px) rotate(5deg)}}
+@keyframes modal-appear{0%{opacity:0;transform:scale(0.8)}100%{opacity:1;transform:scale(1)}}
+@keyframes bounce-in{0%{transform:scale(0.3) translateY(-100px)}50%{transform:scale(1.1) translateY(0)}100%{transform:scale(1) translateY(0)}}
+@keyframes shimmer{0%{left:-100%}100%{left:100%}}
+@keyframes count-up{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
 .hero__cta{display:flex;flex-direction:column;align-items:center;gap:12px;justify-content:center;margin-bottom:26px}
 .btn{padding:12px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:#10131a;color:#fff;cursor:pointer;box-shadow:var(--shadow);text-decoration:none}
 .btn--primary{background:linear-gradient(135deg,var(--accent),#ff9ed3);border:none}
@@ -125,6 +131,38 @@ body{
 /* Magic photo effects */
 .gallery__grid img{transition:all 0.4s ease;filter:brightness(0.9)}
 .gallery__grid img:hover{transform:scale(1.05) rotate(2deg);filter:brightness(1.2) saturate(1.3);box-shadow:0 15px 35px rgba(255,93,177,.4)}
+
+/* Parallax star field */
+.parallax-stars{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.star{position:absolute;background:#fff;border-radius:50%;opacity:0.6;animation:twinkle 3s ease-in-out infinite}
+.star.layer1{animation-duration:3s}
+.star.layer2{animation-duration:2s;opacity:0.4}
+.star.layer3{animation-duration:4s;opacity:0.8}
+
+/* Floating Stitch */
+.floating-stitch{position:fixed;font-size:2rem;pointer-events:none;z-index:15;animation:stitch-bounce 3s ease-in-out infinite;transition:all 0.3s ease}
+
+/* Secret message modal */
+.secret-message{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:1000;animation:modal-appear 0.5s ease-out}
+.secret-content{background:linear-gradient(135deg,var(--accent),#ff9ed3);padding:30px;border-radius:20px;text-align:center;max-width:400px;animation:bounce-in 0.6s ease-out}
+.secret-content h3{margin:0 0 15px;font-family:'Pacifico',cursive;color:#fff}
+.secret-content p{margin:0 0 20px;color:#fff}
+.secret-content button{padding:10px 20px;border:none;border-radius:999px;background:#fff;color:var(--accent);cursor:pointer;font-weight:600}
+
+/* Love Meter Section */
+.love-section{background:linear-gradient(135deg,rgba(255,93,177,.08),rgba(255,237,78,.08));border-radius:20px;margin:40px auto;max-width:800px;text-align:center}
+.love-meter-container{display:flex;flex-direction:column;gap:30px;align-items:center}
+.love-meter{max-width:600px;width:100%}
+.meter-label{color:var(--gold);font-size:1.2rem;font-weight:600;margin-bottom:15px}
+.meter-bar{position:relative;height:30px;background:rgba(255,255,255,.1);border-radius:15px;overflow:hidden;border:2px solid rgba(255,255,255,.2)}
+.meter-fill{height:100%;background:linear-gradient(90deg,#ff6b9d,#ff8a80,#ffab91,#ffd166);border-radius:15px;transition:width 3s ease-out;position:relative;overflow:hidden}
+.meter-fill::after{content:'';position:absolute;top:0;left:-100%;height:100%;width:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shimmer 2s infinite}
+.meter-overflow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--accent);font-weight:700;font-size:1.1rem;opacity:0;animation:glow 2s ease-in-out infinite}
+.meter-text{margin-top:10px;color:var(--muted);font-style:italic}
+.love-stats{display:flex;gap:40px;justify-content:center}
+.love-stat{text-align:center}
+.love-number{display:block;font-size:2.5rem;font-weight:700;color:var(--accent);animation:count-up 3s ease-out}
+.love-stat small{color:var(--muted);font-size:.9rem}
 
 @keyframes rise{0%{transform:translateY(0) rotate(45deg);opacity:.8}100%{transform:translateY(-120vh) rotate(45deg);opacity:0}}
 @keyframes rise-kpop{0%{transform:translateY(0) rotate(45deg) scale(1);opacity:.9}50%{transform:translateY(-60vh) rotate(225deg) scale(1.2);opacity:.7}100%{transform:translateY(-120vh) rotate(405deg) scale(0.8);opacity:0}}
@@ -206,6 +244,36 @@ body.celebrated .story-slideshow{height:100vh;max-width:100%;margin:0;border-rad
  	.hero__main-title{font-size:2.8rem}
  	.hero__title{font-size:2.4rem}
  	.nav__links{display:none}
+ 	
+ 	/* Mobile floating elements */
+ 	.floating-word{font-size:1rem}
+ 	.floating-stitch{font-size:1.5rem;z-index:5}
+ 	.cursor-sparkle{font-size:12px}
+ 	
+ 	/* Mobile parallax stars */
+ 	.parallax-stars .star{width:2px !important;height:2px !important}
+ 	
+ 	/* Mobile secret message */
+ 	.secret-content{max-width:90%;margin:0 20px;padding:25px}
+ 	.secret-content h3{font-size:1.3rem}
+ 	.secret-content p{font-size:.9rem}
+ 	
+ 	/* Mobile love meter */
+ 	.love-section{margin:20px 10px;padding:25px 15px}
+ 	.love-meter{max-width:100%}
+ 	.meter-bar{height:25px}
+ 	.meter-label{font-size:1rem}
+ 	.love-stats{flex-direction:column;gap:20px}
+ 	.love-number{font-size:2rem}
+ 	.meter-text{font-size:.9rem}
+ 	.meter-overflow{font-size:1rem}
+ 	
+ 	/* Mobile cake section */
+ 	.cake-section{margin:20px 10px;padding:25px 15px}
+ 	.birthday-cake{font-size:3rem}
+ 	.candle{font-size:1.2rem}
+ 	.cake-instruction{font-size:1rem}
+ 	.wish-message{font-size:1.1rem}
  	
  	/* Story slideshow mobile responsive */
  	.story{padding:0;min-height:100vh;overflow:hidden}

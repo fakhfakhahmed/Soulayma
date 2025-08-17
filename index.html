@@ -12,6 +12,16 @@
 </head>
 <body>
     <div id="floating-hearts" aria-hidden="true"></div>
+    <div id="parallax-stars" class="parallax-stars" aria-hidden="true"></div>
+    <div id="floating-stitch" class="floating-stitch" aria-hidden="true">💙</div>
+    
+    <div id="secret-message" class="secret-message" style="display: none;">
+        <div class="secret-content">
+            <h3>🌟 Secret Message Unlocked! 🌟</h3>
+            <p>You found my hidden surprise! I love how curious you are 💖</p>
+            <button onclick="this.parentElement.parentElement.style.display='none'">💖 Close</button>
+        </div>
+    </div>
 
     <header class="site-header">
         <nav class="nav">
@@ -82,6 +92,30 @@
             <h2>Our Year Together 💫</h2>
             <p id="yearBlurb">From <span id="startDateText">—</span> to today, you and I wrote our favorite love story.</p>
             <div class="timeline" id="timeline"></div>
+        </section>
+
+        <section id="love-meter" class="section love-section">
+            <h2>Love Meter 💕</h2>
+            <div class="love-meter-container">
+                <div class="love-meter" id="loveMeter">
+                    <div class="meter-label">My Love for You</div>
+                    <div class="meter-bar">
+                        <div class="meter-fill" id="meterFill"></div>
+                        <div class="meter-overflow">💖 INFINITE! 💖</div>
+                    </div>
+                    <div class="meter-text" id="meterText">Loading love...</div>
+                </div>
+                <div class="love-stats">
+                    <div class="love-stat">
+                        <span class="love-number" id="lovePercentage">0</span>%
+                        <small>Love Level</small>
+                    </div>
+                    <div class="love-stat">
+                        <span class="love-number">∞</span>
+                        <small>Forever</small>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="gallery" class="section gallery">

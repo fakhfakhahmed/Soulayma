@@ -542,25 +542,47 @@
 		setInterval(addFloatingWord, 4000);
 	}
 
-	// Sparkle cursor trail
+	// Sparkle cursor trail (mobile-optimized)
 	function initCursorTrail(){
 		const sparkles = ['✨', '💖', '⭐', '💫', '🌟'];
+		const isMobile = window.innerWidth <= 700;
 		let lastTime = 0;
+		const throttleTime = isMobile ? 200 : 100; // Less frequent on mobile
 		
+		// Mouse movement for desktop
 		document.addEventListener('mousemove', (e) => {
+			if(isMobile) return; // Skip on mobile to save battery
+			
 			const now = Date.now();
-			if(now - lastTime < 100) return; // Throttle
+			if(now - lastTime < throttleTime) return;
 			lastTime = now;
 			
+			createSparkle(e.clientX, e.clientY);
+		});
+		
+		// Touch events for mobile (only on touch start, not move)
+		document.addEventListener('touchstart', (e) => {
+			if(!isMobile) return;
+			
+			const now = Date.now();
+			if(now - lastTime < throttleTime) return;
+			lastTime = now;
+			
+			if(e.touches.length > 0){
+				createSparkle(e.touches[0].clientX, e.touches[0].clientY);
+			}
+		}, { passive: true });
+		
+		function createSparkle(x, y){
 			const sparkle = document.createElement('div');
 			sparkle.className = 'cursor-sparkle';
 			sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-			sparkle.style.left = e.clientX + 'px';
-			sparkle.style.top = e.clientY + 'px';
+			sparkle.style.left = x + 'px';
+			sparkle.style.top = y + 'px';
 			
 			document.body.appendChild(sparkle);
 			setTimeout(() => sparkle.remove(), 1000);
-		});
+		}
 	}
 
 	// Interactive birthday cake
@@ -607,12 +629,218 @@
 		});
 	}
 
+	// Parallax star field (mobile-optimized)
+	function createStarField(){
+		const starContainer = document.getElementById('parallax-stars');
+		if(!starContainer) return;
+
+		const isMobile = window.innerWidth <= 700;
+		const starCount = isMobile ? 50 : 100; // Fewer stars on mobile
+
+		for(let i = 0; i < starCount; i++){
+			const star = document.createElement('div');
+			star.className = `star layer${Math.floor(Math.random() * 3) + 1}`;
+			star.style.left = Math.random() * 100 + '%';
+			star.style.top = Math.random() * 100 + '%';
+			star.style.width = Math.random() * 3 + 1 + 'px';
+			star.style.height = star.style.width;
+			star.style.animationDelay = Math.random() * 3 + 's';
+			starContainer.appendChild(star);
+		}
+
+		// Parallax effect on scroll (throttled for mobile)
+		let ticking = false;
+		
+		function updateParallax(){
+			if(!ticking){
+				requestAnimationFrame(() => {
+					const scrolled = window.pageYOffset;
+					const layers = starContainer.children;
+					
+					for(let i = 0; i < layers.length; i++){
+						const layer = layers[i];
+						const speed = layer.classList.contains('layer1') ? 0.5 : 
+									  layer.classList.contains('layer2') ? 0.3 : 0.7;
+						layer.style.transform = `translateY(${scrolled * speed}px)`;
+					}
+					
+					ticking = false;
+				});
+				ticking = true;
+			}
+		}
+		
+		window.addEventListener('scroll', updateParallax, { passive: true });
+	}
+
+	// Floating Stitch follows cursor (mobile-friendly)
+	function initFloatingStitch(){
+		const stitch = document.getElementById('floating-stitch');
+		if(!stitch) return;
+
+		let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
+		let currentX = targetX, currentY = targetY;
+		const isMobile = window.innerWidth <= 700;
+
+		// Mouse movement for desktop
+		document.addEventListener('mousemove', (e) => {
+			targetX = e.clientX - 20;
+			targetY = e.clientY - 20;
+		});
+
+		// Touch movement for mobile
+		document.addEventListener('touchmove', (e) => {
+			if(e.touches.length > 0){
+				targetX = e.touches[0].clientX - 20;
+				targetY = e.touches[0].clientY - 20;
+			}
+		}, { passive: true });
+
+		// On mobile, also follow scroll for vertical movement
+		if(isMobile){
+			window.addEventListener('scroll', () => {
+				targetY = window.innerHeight / 2 + (window.pageYOffset * 0.1);
+			});
+		}
+
+		function animateStitch(){
+			const speed = isMobile ? 0.05 : 0.1; // Slower on mobile for better battery
+			currentX += (targetX - currentX) * speed;
+			currentY += (targetY - currentY) * speed;
+			
+			stitch.style.left = currentX + 'px';
+			stitch.style.top = currentY + 'px';
+			
+			requestAnimationFrame(animateStitch);
+		}
+		animateStitch();
+	}
+
+	// Shake to surprise (mobile)
+	function initShakeToSurprise(){
+		if(typeof DeviceMotionEvent === 'undefined') return;
+
+		let lastShakeTime = 0;
+		let shakeThreshold = 15;
+
+		window.addEventListener('devicemotion', (e) => {
+			const acceleration = e.accelerationIncludingGravity;
+			const curTime = new Date().getTime();
+			
+			if((curTime - lastShakeTime) > 1000){
+				const deltaX = Math.abs(acceleration.x);
+				const deltaY = Math.abs(acceleration.y);
+				const deltaZ = Math.abs(acceleration.z);
+				
+				if((deltaX > shakeThreshold) || (deltaY > shakeThreshold) || (deltaZ > shakeThreshold)){
+					triggerShakeSurprise();
+					lastShakeTime = curTime;
+				}
+			}
+		});
+
+		function triggerShakeSurprise(){
+			// Big confetti burst
+			if(window.confettiPieces && window.makePiece){
+				for(let i = 0; i < 100; i++){
+					window.confettiPieces.push(window.makePiece());
+				}
+			}
+			
+			// Show secret message
+			document.getElementById('secret-message').style.display = 'flex';
+		}
+	}
+
+	// Love meter animation
+	function initLoveMeter(){
+		const meterFill = document.getElementById('meterFill');
+		const meterText = document.getElementById('meterText');
+		const lovePercentage = document.getElementById('lovePercentage');
+		const meterOverflow = document.querySelector('.meter-overflow');
+
+		if(!meterFill) return;
+
+		const lovePhrases = [
+			"Calculating cuteness...",
+			"Measuring heart rate...",
+			"Analyzing sparkles...",
+			"Computing princess power...",
+			"Scanning for magic...",
+			"Love levels rising...",
+			"Breaking the scale..."
+		];
+
+		let currentPhrase = 0;
+		let percentage = 0;
+
+		function updateMeter(){
+			if(percentage <= 100){
+				meterFill.style.width = percentage + '%';
+				lovePercentage.textContent = percentage;
+				
+				if(currentPhrase < lovePhrases.length && percentage % 15 === 0){
+					meterText.textContent = lovePhrases[currentPhrase];
+					currentPhrase++;
+				}
+				
+				percentage += 2;
+				setTimeout(updateMeter, 80);
+			} else {
+				// Overflow animation
+				meterFill.style.width = '100%';
+				meterText.textContent = "ERROR: Love levels too high to measure!";
+				meterOverflow.style.opacity = '1';
+				lovePercentage.textContent = '∞';
+			}
+		}
+
+		// Start when section comes into view
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if(entry.isIntersecting){
+					setTimeout(updateMeter, 500);
+					observer.unobserve(entry.target);
+				}
+			});
+		});
+
+		observer.observe(document.getElementById('love-meter'));
+	}
+
+	// Secret click areas
+	function initSecretMessages(){
+		let clickCount = 0;
+		const secretAreas = [
+			document.querySelector('.hero__main-title'),
+			document.querySelector('.hero__title'),
+			document.querySelector('.note h2')
+		];
+
+		secretAreas.forEach(area => {
+			if(area){
+				area.addEventListener('click', () => {
+					clickCount++;
+					if(clickCount >= 3){
+						document.getElementById('secret-message').style.display = 'flex';
+						clickCount = 0;
+					}
+				});
+			}
+		});
+	}
+
 	// Initialize new features
 	initQuotesCarousel();
 	createKpopElements();
 	createFloatingWords();
 	initCursorTrail();
 	initBirthdayCake();
+	createStarField();
+	initFloatingStitch();
+	initShakeToSurprise();
+	initLoveMeter();
+	initSecretMessages();
 
 	// If hero becomes visible again, restore it fully
 	const homeSection = document.getElementById('home');
