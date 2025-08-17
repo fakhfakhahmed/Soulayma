@@ -39,7 +39,6 @@ window.LOVE_CONFIG = {
 		{ date: "29 Mar 2024", text: "First time together" },
 		{ date: "8 Aug 2024", text: "Our first holidays together" },
 		{ date: "02 Feb 2025", text: "Our first walk" },
-		{ date: "", text: "Our promise ring" }
 	],
 
 	// Gallery images
@@ -61,8 +60,7 @@ window.LOVE_CONFIG = {
 		{ image: 'assets/images/gallery/WhatsApp Image 2025-08-17 at 15.59.15_6c6750d2.jpg', title: 'Will you be my queen?', text: 'And you said yes. Our journey began.' },
 		{ image: 'assets/images/gallery/our first photo toghther.jpg', title: 'Our First Photo Together', text: '8 Mar 2024 — our first photo together' },
 		{ image: 'assets/images/gallery/our first holidays .jpg', title: 'Our First Holidays', text: '8 Aug 2024 — our first holidays together' },
-		{ image: 'assets/images/gallery/firstwalk.jpg', title: 'Our First Walk', text: '02 Feb 2025 — our first walk' },
-		{ image: 'assets/images/gallery/WhatsApp Image 2025-08-17 at 16.22.44_6ff7a7b8.jpg', title: 'Our Promise Ring', text: 'Our promise ring' }
+		{ image: 'assets/images/gallery/WhatsApp Image 2025-08-17 at 16.22.44_6ff7a7b8.jpg', title: 'Our Promise Ring' }
 	],
 
 	// Movie night suggestions (Stitch + romance + feel-good vibes)

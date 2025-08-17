@@ -134,6 +134,10 @@
 	function burst(){
 		for(let i=0;i<120;i++) confettiPieces.push(makePiece());
 	}
+	
+	// Expose globally for story slideshow
+	window.confettiPieces = confettiPieces;
+	window.makePiece = makePiece;
 	function tick(){
 		if(!ctx) return;
 		ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -182,83 +186,259 @@
 		});
 	}
 
-	// Story slides from config.story (falls back to gallery), with image preloading and skip-on-error
-	const storyScroller = document.getElementById('storyScroller');
+	// Animated Story Slideshow
+	const slideContainer = document.getElementById('slideContainer');
+	const nextBtn = document.getElementById('nextBtn');
+	const continueBtn = document.getElementById('continueBtn');
+	const progressFill = document.getElementById('progressFill');
+	const slideCounter = document.getElementById('slideCounter');
+	
 	const storyItems = (cfg.story && cfg.story.length ? cfg.story : (cfg.gallery||[]).map((src, i) => ({
 		image: src,
 		title: `Memory #${i+1}`,
 		text: 'A special moment we shared.'
 	})));
-	function createSlide(item){
-		const slide = document.createElement('section');
-		slide.className = 'slide';
-		slide.innerHTML = `
-			<div class="slide__image"><img src="${item.image}" alt="Memory image"></div>
-			<div class="slide__caption">
-				<div class="title">${item.title || ''}</div>
-				<div class="text">${item.text || ''}</div>
-			</div>
+
+	let currentSlide = 0;
+	let slides = [];
+	let isAnimating = false;
+
+	function createStorySlide(item, index){
+		const slide = document.createElement('div');
+		slide.className = `story-slide ${index === 0 ? 'active' : 'next'}`;
+		
+		// Create background div with fallback color
+		const bg = document.createElement('div');
+		bg.className = 'story-slide__bg';
+		bg.style.backgroundImage = `url('${item.image}')`;
+		bg.style.backgroundColor = 'rgba(255, 93, 177, 0.3)'; // Fallback pink background
+		
+		const content = document.createElement('div');
+		content.className = 'story-slide__content';
+		content.innerHTML = `
+			<h3 class="story-slide__title">${item.title || 'Our Memory'}</h3>
+			<p class="story-slide__text">${item.text || 'A special moment we shared'}</p>
 		`;
+		
+		slide.appendChild(bg);
+		slide.appendChild(content);
+		
+		// Debug: log slide creation
+		console.log('Created slide:', item.title, slide);
+		
 		return slide;
 	}
-	function preload(src){
-		return new Promise(resolve=>{
+
+	function updateUI(){
+		if(!progressFill || !slideCounter) return;
+		const progress = ((currentSlide + 1) / storyItems.length) * 100;
+		progressFill.style.width = `${progress}%`;
+		slideCounter.textContent = `${currentSlide + 1} / ${storyItems.length}`;
+		
+		// Show "Tap to see next" only on first slide
+		// Show down arrow button only on last slide
+		if(currentSlide === 0){
+			nextBtn.style.display = 'flex';
+			continueBtn.style.display = 'none';
+		} else if(currentSlide >= storyItems.length - 1){
+			nextBtn.style.display = 'none';
+			continueBtn.style.display = 'flex';
+		} else {
+			nextBtn.style.display = 'none';
+			continueBtn.style.display = 'none';
+		}
+	}
+
+	function nextSlide(){
+		if(isAnimating || currentSlide >= storyItems.length - 1) return;
+		isAnimating = true;
+		
+		// Hide current slide
+		slides[currentSlide].classList.remove('active');
+		slides[currentSlide].classList.add('prev');
+		
+		// Show next slide
+		currentSlide++;
+		slides[currentSlide].classList.remove('next', 'prev');
+		slides[currentSlide].classList.add('active');
+		
+		updateUI();
+		
+		// Reset animation flag
+		setTimeout(() => { isAnimating = false; }, 600);
+		
+		// Add a little confetti effect
+		if(window.confettiPieces && window.makePiece){
+			for(let i = 0; i < 20; i++){
+				window.confettiPieces.push(window.makePiece());
+			}
+		}
+	}
+
+	function prevSlide(){
+		if(isAnimating || currentSlide <= 0) return;
+		isAnimating = true;
+		
+		// Hide current slide
+		slides[currentSlide].classList.remove('active');
+		slides[currentSlide].classList.add('next');
+		
+		// Show previous slide
+		currentSlide--;
+		slides[currentSlide].classList.remove('prev', 'next');
+		slides[currentSlide].classList.add('active');
+		
+		updateUI();
+		
+		// Reset animation flag
+		setTimeout(() => { isAnimating = false; }, 600);
+	}
+
+	function preloadImage(src){
+		return new Promise(resolve => {
 			const img = new Image();
 			img.onload = () => resolve(true);
 			img.onerror = () => resolve(false);
 			img.src = src;
 		});
 	}
-	async function buildStory(){
-		if(!storyScroller) return;
-		for(const item of storyItems){
-			// eslint-disable-next-line no-await-in-loop
-			const ok = await preload(item.image);
-			if(!ok) continue;
-			storyScroller.appendChild(createSlide(item));
-		}
-		// If nothing loaded, show a friendly fallback
-		if(storyScroller.children.length === 0){
-			const fallback = document.createElement('div');
-			fallback.style.height = '60vh';
-			fallback.style.display = 'grid';
-			fallback.style.placeItems = 'center';
-			fallback.textContent = 'Add photos to your story in config.js';
-			storyScroller.appendChild(fallback);
-		}
-		const spacer = document.createElement('div');
-		spacer.style.height = '40vh';
-		storyScroller.appendChild(spacer);
-	}
-	buildStory();
 
-	// Scroll handoff: when at ends of story scroller, pass scroll to page
-	if(storyScroller){
-		const scrollToId = (id) => {
-			const el = document.getElementById(id);
-			if(!el) return;
-			if(id === 'home'){
+	async function buildStorySlideshow(){
+		console.log('Building slideshow...', slideContainer, storyItems);
+		if(!slideContainer) {
+			console.log('No slideContainer found!');
+			return;
+		}
+		
+		if(storyItems.length === 0) {
+			console.log('No story items configured');
+			slideContainer.innerHTML = `
+				<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;text-align:center;padding:40px;">
+					<div>
+						<h3>No story configured</h3>
+						<p>Add your story items to config.js</p>
+					</div>
+				</div>
+			`;
+			return;
+		}
+		
+		// Create slides without strict preloading (more permissive)
+		let successfulSlides = 0;
+		for(let i = 0; i < storyItems.length; i++){
+			const item = storyItems[i];
+			console.log('Creating slide for:', item);
+			
+			// Create slide immediately, let browser handle image loading
+			const slide = createStorySlide(item, slides.length);
+			slides.push(slide);
+			slideContainer.appendChild(slide);
+			successfulSlides++;
+			console.log('Added slide:', successfulSlides);
+		}
+		
+		// Always show something, even if images fail to load
+		if(successfulSlides === 0){
+			console.log('No slides created, showing fallback');
+			slideContainer.innerHTML = `
+				<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;text-align:center;padding:40px;">
+					<div>
+						<h3>Story loading issue</h3>
+						<p>Check image paths in config.js and assets/images/gallery/</p>
+					</div>
+				</div>
+			`;
+			return;
+		}
+		
+		console.log('Successfully built', successfulSlides, 'slides');
+		updateUI();
+		
+		// Set up event listeners
+		if(nextBtn){
+			nextBtn.addEventListener('click', nextSlide);
+		}
+		
+		if(continueBtn){
+			continueBtn.addEventListener('click', () => {
+				// Exit celebrated mode first
 				document.body.classList.remove('celebrated');
+				
+				// Wait a bit for the transition, then scroll to timeline
+				setTimeout(() => {
+					const year = document.getElementById('year');
+					if(year) year.scrollIntoView({ behavior:'smooth' });
+				}, 300);
+			});
+		}
+		
+		// Instagram-style tap areas: left side = previous, right side = next
+		slideContainer.addEventListener('click', (e) => {
+			if(!e.target.closest('.story-ui')){
+				const rect = slideContainer.getBoundingClientRect();
+				const clickX = e.clientX - rect.left;
+				const containerWidth = rect.width;
+				
+				// Left third = go back, right two-thirds = go forward
+				if(clickX < containerWidth / 3){
+					// Left tap - go back
+					if(currentSlide > 0){
+						prevSlide();
+					}
+				} else {
+					// Right tap - go forward
+					if(currentSlide < storyItems.length - 1){
+						nextSlide();
+					}
+				}
 			}
-			el.scrollIntoView({ behavior:'smooth' });
-		};
-		storyScroller.addEventListener('wheel', (e) => {
-			const atTop = storyScroller.scrollTop <= 0;
-			const atBottom = storyScroller.scrollTop + storyScroller.clientHeight >= storyScroller.scrollHeight - 1;
-			if(atBottom && e.deltaY > 0){ e.preventDefault(); scrollToId('year'); }
-			if(atTop && e.deltaY < 0){ e.preventDefault(); scrollToId('home'); }
-		}, { passive: false });
+		});
+		
+		// Touch support for mobile swipe
+		let touchStartX = 0;
 		let touchStartY = 0;
-		storyScroller.addEventListener('touchstart', (e) => { touchStartY = (e.changedTouches[0] || e.touches[0]).clientY; }, { passive: true });
-		storyScroller.addEventListener('touchmove', (e) => {
-			const currentY = (e.changedTouches[0] || e.touches[0]).clientY;
-			const delta = touchStartY - currentY; // >0 user swipes up (scroll down)
-			const atTop = storyScroller.scrollTop <= 0;
-			const atBottom = storyScroller.scrollTop + storyScroller.clientHeight >= storyScroller.scrollHeight - 1;
-			if(atBottom && delta > 6){ e.preventDefault(); scrollToId('year'); }
-			if(atTop && delta < -6){ e.preventDefault(); scrollToId('home'); }
-		}, { passive: false });
+		slideContainer.addEventListener('touchstart', (e) => {
+			touchStartX = e.touches[0].clientX;
+			touchStartY = e.touches[0].clientY;
+		}, { passive: true });
+		
+		slideContainer.addEventListener('touchend', (e) => {
+			if(!touchStartX || !touchStartY) return;
+			const touchEndX = e.changedTouches[0].clientX;
+			const touchEndY = e.changedTouches[0].clientY;
+			const deltaX = touchStartX - touchEndX;
+			const deltaY = touchStartY - touchEndY;
+			
+			// Only respond to horizontal swipes
+			if(Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50 && !e.target.closest('.story-ui')){
+				if(deltaX > 0 && currentSlide < storyItems.length - 1){ // Swipe left = next
+					nextSlide();
+				} else if(deltaX < 0 && currentSlide > 0){ // Swipe right = previous
+					prevSlide();
+				}
+			}
+			
+			touchStartX = 0;
+			touchStartY = 0;
+		}, { passive: true });
+		
+		// Keyboard support
+		document.addEventListener('keydown', (e) => {
+			if(e.key === 'ArrowRight' || e.key === ' '){
+				if(currentSlide < storyItems.length - 1){
+					e.preventDefault();
+					nextSlide();
+				}
+			} else if(e.key === 'ArrowLeft'){
+				if(currentSlide > 0){
+					e.preventDefault();
+					prevSlide();
+				}
+			}
+		});
 	}
+
+	buildStorySlideshow();
 
 	// If hero becomes visible again, restore it fully
 	const homeSection = document.getElementById('home');
@@ -272,14 +452,7 @@
 		io.observe(homeSection);
 	}
 
-	// Continue button: scroll to Year section when at bottom
-	const continueBtn = document.getElementById('storyContinue');
-	if(continueBtn){
-		continueBtn.addEventListener('click', () => {
-			const year = document.getElementById('year');
-			if(year) year.scrollIntoView({ behavior:'smooth' });
-		});
-	}
+	// Old continue button code removed - now handled in slideshow
 
 	// Background audio: try unmuted autoplay; if blocked, fall back to muted and unmute on first interaction
 	const audioEl = document.getElementById('bgAudio');

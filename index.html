@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Happy Birthday 💖</title>
     <meta name="description" content="A little website surprise filled with love, memories, and magic.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,9 +47,26 @@
         </section>
 
         <section id="story" class="section story">
-            <h2>Our Story, One Scroll At A Time</h2>
-            <div class="story__scroller" id="storyScroller" aria-label="Memories slideshow"></div>
-            <button id="storyContinue" class="story-continue" title="Continue to timeline" aria-label="Continue to timeline">↓</button>
+            <h2>Our Love Story ✨</h2>
+            <div class="story-slideshow" id="storySlideshow">
+                <div class="slide-container" id="slideContainer">
+                    <!-- Slides will be inserted here -->
+                </div>
+                <div class="story-ui">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="slide-counter" id="slideCounter">1 / 6</div>
+                    <button class="next-btn" id="nextBtn">
+                        <span class="next-text">Tap to see next</span>
+                        <span class="next-icon">💖</span>
+                    </button>
+                    <button class="continue-btn" id="continueBtn" style="display: none;">
+                        <span>Continue to timeline</span>
+                        <span>↓</span>
+                    </button>
+                </div>
+            </div>
         </section>
 
         <section id="year" class="section year">
