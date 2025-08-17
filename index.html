@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday 💖</title>
+    <meta name="description" content="A little website surprise filled with love, memories, and magic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="floating-hearts" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <nav class="nav">
+            <a href="#home" class="nav__brand">✨ For my princess</a>
+            <div class="nav__links">
+                <a href="#year">Our Year</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#note">A Note</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="section hero">
+            <div class="hero__content">
+                <h1 class="hero__title">Happy Birthday, <span class="soft">my love</span> 🎂</h1>
+                <p class="hero__subtitle" id="subtitle">You make my world sparkle like a Taylor bridge ✨ and cozy like Stitch cuddles 💙</p>
+                <div class="hero__cta">
+                    <button id="confettiBtn" class="btn btn--primary">Celebrate!</button>
+                </div>
+                <div class="stats" id="quickStats">
+                    <div class="stat"><span id="daysTogether">—</span><small id="daysLabel">days together</small></div>
+                    <div class="stat"><span id="hoursTogether">—</span><small id="hoursLabel">hours of us</small></div>
+                    <div class="stat"><span id="movieCount">—</span><small>movie nights</small></div>
+                </div>
+            </div>
+            <div class="hero__decoration" aria-hidden="true">
+                <div class="twinkle twinkle--1"></div>
+                <div class="twinkle twinkle--2"></div>
+                <div class="twinkle twinkle--3"></div>
+            </div>
+            <canvas id="confettiCanvas" class="confetti-canvas" aria-hidden="true"></canvas>
+        </section>
+
+        <section id="story" class="section story">
+            <h2>Our Story, One Scroll At A Time</h2>
+            <div class="story__scroller" id="storyScroller" aria-label="Memories slideshow"></div>
+            <button id="storyContinue" class="story-continue" title="Continue to timeline" aria-label="Continue to timeline">↓</button>
+        </section>
+
+        <section id="year" class="section year">
+            <h2>Our Year Together 💫</h2>
+            <p id="yearBlurb">From <span id="startDateText">—</span> to today, you and I wrote our favorite love story.</p>
+            <div class="timeline" id="timeline"></div>
+        </section>
+
+        <section id="gallery" class="section gallery">
+            <h2>Moments I Love With You 📸</h2>
+            <p class="section__hint">Add your photos in <code>assets/images/gallery</code> and list them in <code>config.js</code>. Click to zoom.</p>
+            <div class="gallery__grid" id="galleryGrid"></div>
+        </section>
+
+        
+
+        <section id="note" class="section note">
+            <h2>My Birthday Note To You 💌</h2>
+            <div class="note__paper">
+                <p id="loveNote" class="typewriter"></p>
+            </div>
+            <div class="reasons" id="reasons"></div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Made with 💖 by <span id="fromName">Me</span> for <span id="toName">You</span>. Forever + 1.</p>
+    </footer>
+
+    <div class="audio-ui" aria-live="polite">
+        <button id="audioToggle" class="audio-toggle" aria-pressed="true" title="Play/pause background music">♫</button>
+        <audio id="bgAudio" preload="auto" loop autoplay></audio>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+    <noscript>This site needs JavaScript for the magic ✨</noscript>
+</body>
+</html>
+
+
