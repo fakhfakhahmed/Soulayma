@@ -520,9 +520,99 @@
 
 
 
+	// Floating love words
+	function createFloatingWords(){
+		const words = ['Love', 'Forever', 'Soulayma', 'Beautiful', 'Princess', 'Dreams', 'Magic', 'Heart', 'Star', 'Wish'];
+		const colors = ['', 'pink', 'purple'];
+		
+		function addFloatingWord(){
+			const word = document.createElement('div');
+			word.className = `floating-word ${colors[Math.floor(Math.random() * colors.length)]}`;
+			word.textContent = words[Math.floor(Math.random() * words.length)];
+			word.style.left = Math.random() * 100 + 'vw';
+			word.style.animationDelay = Math.random() * 2 + 's';
+			
+			const heartsContainer = document.getElementById('floating-hearts');
+			if(heartsContainer){
+				heartsContainer.appendChild(word);
+				setTimeout(() => word.remove(), 12000);
+			}
+		}
+		
+		setInterval(addFloatingWord, 4000);
+	}
+
+	// Sparkle cursor trail
+	function initCursorTrail(){
+		const sparkles = ['✨', '💖', '⭐', '💫', '🌟'];
+		let lastTime = 0;
+		
+		document.addEventListener('mousemove', (e) => {
+			const now = Date.now();
+			if(now - lastTime < 100) return; // Throttle
+			lastTime = now;
+			
+			const sparkle = document.createElement('div');
+			sparkle.className = 'cursor-sparkle';
+			sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+			sparkle.style.left = e.clientX + 'px';
+			sparkle.style.top = e.clientY + 'px';
+			
+			document.body.appendChild(sparkle);
+			setTimeout(() => sparkle.remove(), 1000);
+		});
+	}
+
+	// Interactive birthday cake
+	function initBirthdayCake(){
+		const cake = document.getElementById('birthdayCake');
+		const candles = document.querySelectorAll('.candle');
+		const instruction = document.getElementById('cakeInstruction');
+		const wishMessage = document.getElementById('wishMessage');
+		const sparklesContainer = document.getElementById('cakeSparkles');
+		
+		if(!cake) return;
+		
+		let blown = 0;
+		
+		cake.addEventListener('click', () => {
+			if(blown < candles.length){
+				candles[blown].classList.add('blown-out');
+				blown++;
+				
+				// Add sparkles
+				for(let i = 0; i < 5; i++){
+					const sparkle = document.createElement('div');
+					sparkle.style.position = 'absolute';
+					sparkle.style.left = Math.random() * 100 + '%';
+					sparkle.style.top = Math.random() * 100 + '%';
+					sparkle.textContent = '✨';
+					sparkle.style.animation = 'sparkle 2s ease-out forwards';
+					sparklesContainer.appendChild(sparkle);
+					setTimeout(() => sparkle.remove(), 2000);
+				}
+				
+				if(blown === candles.length){
+					instruction.style.display = 'none';
+					wishMessage.style.display = 'block';
+					
+					// Big celebration
+					if(window.confettiPieces && window.makePiece){
+						for(let i = 0; i < 50; i++){
+							window.confettiPieces.push(window.makePiece());
+						}
+					}
+				}
+			}
+		});
+	}
+
 	// Initialize new features
 	initQuotesCarousel();
 	createKpopElements();
+	createFloatingWords();
+	initCursorTrail();
+	initBirthdayCake();
 
 	// If hero becomes visible again, restore it fully
 	const homeSection = document.getElementById('home');

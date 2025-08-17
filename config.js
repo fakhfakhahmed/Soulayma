@@ -66,8 +66,7 @@ window.LOVE_CONFIG = {
 	// Movie night suggestions (Stitch + romance + feel-good vibes)
 	movies: [
 		{ title: "Lilo & Stitch", description: "Ohana means family.", image: "https://image.tmdb.org/t/p/w500/wHoYRORv0P6G45XnD1n1i4G2UTg.jpg", tags: ["Cozy","Animated","Blue vibes"] },
-		{ title: "La La Land", description: "Dreamers in love.", image: "https://image.tmdb.org/t/p/w500/uDO8zWDhfWwoFdKS4fzkUJt0Rf0.jpg", tags: ["Music","Romance"] },
-		{ title: "The Notebook", description: "If you’re a bird, I’m a bird.", image: "https://image.tmdb.org/t/p/w500/rNzQyW4f8B8cQeg7Dgj3n6eT5TU.jpg", tags: ["Classic","Tissues ready"] }
+		
 	],
 
 	// Your love letter (multi-line supported)
